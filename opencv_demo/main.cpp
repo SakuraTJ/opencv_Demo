@@ -11,6 +11,12 @@ int main()
 {
 	std::string filename = "G:/ADate/photo/b.png";
 	//q0(filename);
-	q1(filename);
+	//q1(filename);
+	//q2(filename);
+	//q3(filename);
+	//q4(filename);
+	//q5(filename);
+	//q6(filename);
+	q7(filename);
 	return 0;
 }
