@@ -21,4 +21,8 @@ void q7(std::string filename);
 cv::Mat randnoise(cv::Mat img);
 cv::Mat gaussfilter(cv::Mat img);
 void q8(std::string filename);
+cv::Mat medfilter(cv::Mat img);
+void q9(std::string filename);
+cv::Mat maxminfilter(cv::Mat img);
+void q10(std::string filename);
 #endif // Q1_10_H

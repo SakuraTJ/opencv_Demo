@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include<algorithm>
 #include <core/core.hpp>
 #include <highgui/highgui.hpp>
 #include <imgproc/imgproc.hpp>
@@ -262,7 +263,7 @@ void q7(std::string filename)
 //随机噪点生成
 Mat randnoise(Mat img)
 {
-	int noise_num=3000;//噪点数目
+	int noise_num=0.1*img.cols*img.rows;//噪点比例
 	Mat out = img.clone();
 	int x,y;
 	for(int i=0;i<noise_num;i++)
@@ -278,7 +279,7 @@ Mat randnoise(Mat img)
 	return out;
 }
 
-//高斯滤波器
+//高斯滤波器 opencv函数gaussianBlur()
 Mat gaussfilter(Mat img)
 {
 	//卷积核
@@ -344,5 +345,120 @@ void q8(std::string filename)
 	imgnew.copyTo(roileft);
 	namedWindow("高斯滤波");
 	imshow("高斯滤波",img2);
+	waitKey(0);
+}
+
+//中值滤波 - 去除椒盐噪声（噪声比例低效果好）opencv函数medicalBlur()
+Mat medfilter(Mat img)
+{
+	//卷积核
+	const int kernel_size = 3;//卷积核大小 限定奇数
+    double kernel_sum = 0;
+    int pad = floor(kernel_size / 2);
+	vector<int> kernel;
+	
+	// 滤波
+    Mat out = Mat::zeros(img.rows, img.cols,CV_8UC3);
+	
+	for (int y = 0; y < img.rows-pad; y++)
+	{
+		for (int x = 0; x < img.cols -pad; x++)
+		{
+			  for (int c = 0; c < img.channels(); c++)
+			  {
+				for (int dy = -pad; dy < pad + 1; dy++){
+					for (int dx = -pad; dx < pad + 1; dx++){
+						if (((x + dx) >= 0) && ((y + dy) >= 0)){ 
+							kernel.push_back(img.at<Vec3b>(y + dy, x + dx)[c]);
+						}else
+						{
+							kernel.push_back(0);//padding zero
+						}
+					}
+				}
+				sort(kernel.begin(),kernel.end());
+			    out.at<Vec3b>(y, x)[c] = (uchar)kernel[kernel_size*kernel_size/2];
+				kernel.clear();
+			  }
+		}
+    }
+	return out;
+}
+
+//中值滤波测试
+void q9(std::string filename)
+{
+	Mat img = imread(filename);
+	Mat imgnoise = randnoise(img);
+	Mat imgnew = medfilter(imgnoise);
+	Mat img2 = Mat(img.rows,img.cols * 2,CV_8UC3);
+	Mat roiright = img2(Rect(0,0,img.cols,img.rows));
+	img.copyTo(roiright);
+	Mat roileft = img2(Rect(img.cols,0,img.cols,img.rows));
+	imgnew.convertTo(imgnew,CV_8UC3);
+	imgnew.copyTo(roileft);
+	namedWindow("中值滤波");
+	imshow("中值滤波",img2);
+	waitKey(0);
+}
+
+/********************
+*其他滤波器及用途
+*motion filter(运动模糊)->产生运动模糊的效果 <> 卷积核取对角线方向的像素的平均值 <> 用维纳滤波恢复 或 Richardson-Lucy算法迭代恢复
+*MAX-MIN滤波器->边缘检测 <> 取像素点邻域最大值最小值之差赋值 
+*差分滤波器->对图像亮度急剧变化的边缘有提取效果 <> 分为横向核纵向核
+*Sobel滤波器->可以提取特定方向（纵向或横向）的边缘 <> 分为横向核纵向核
+********************/
+
+//MAX-MIN滤波器
+Mat maxminfilter(Mat img)
+{
+	//卷积核
+	const int kernel_size = 3;//卷积核大小 限定奇数
+    double kernel_sum = 0;
+    int pad = floor(kernel_size / 2);
+	vector<int> kernel;
+	
+	// 滤波
+    Mat out = Mat::zeros(img.rows, img.cols,CV_8UC3);
+	std::cout<<"边缘提取中..";
+	for (int y = 0; y < img.rows-pad; y++)
+	{
+		for (int x = 0; x < img.cols -pad; x++)
+		{
+			  for (int c = 0; c < img.channels(); c++)
+			  {
+				for (int dy = -pad; dy < pad + 1; dy++){
+					for (int dx = -pad; dx < pad + 1; dx++){
+						if (((x + dx) >= 0) && ((y + dy) >= 0)){ 
+							kernel.push_back(img.at<Vec3b>(y + dy, x + dx)[c]);
+						}else
+						{
+							kernel.push_back(0);//padding zero
+						}
+					}
+				}
+				sort(kernel.begin(),kernel.end());
+			    out.at<Vec3b>(y, x)[c] = (uchar)(kernel.back()-kernel.front());
+				kernel.clear();
+			  }
+		}
+    }
+	return out;
+}
+
+//maxmin滤波测试
+void q10(std::string filename)
+{
+	Mat img = imread(filename);
+	Mat imgnew = maxminfilter(img);
+	Mat img2 = Mat(img.rows,img.cols * 2,CV_8UC3);
+	Mat roiright = img2(Rect(0,0,img.cols,img.rows));
+	img.copyTo(roiright);
+	Mat roileft = img2(Rect(img.cols,0,img.cols,img.rows));
+	imgnew.convertTo(imgnew,CV_8UC3);
+	imgnew.copyTo(roileft);
+	namedWindow("maxmin滤波");
+	imshow("maxmin滤波",img2);
 	waitKey(0);
 }

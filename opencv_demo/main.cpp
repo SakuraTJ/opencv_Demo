@@ -18,6 +18,8 @@ int main()
 	//q5(filename);
 	//q6(filename);
 	//q7(filename);
-	q8(filename);
+	//q8(filename);
+	//q9(filename);
+	q10(filename);
 	return 0;
 }
