@@ -17,6 +17,7 @@ int main()
 	//q4(filename);
 	//q5(filename);
 	//q6(filename);
-	q7(filename);
+	//q7(filename);
+	q8(filename);
 	return 0;
 }

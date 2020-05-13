@@ -258,3 +258,91 @@ void q7(std::string filename)
 	imshow("平均池化",img2);
 	waitKey(0);
 }
+
+//随机噪点生成
+Mat randnoise(Mat img)
+{
+	int noise_num=3000;//噪点数目
+	Mat out = img.clone();
+	int x,y;
+	for(int i=0;i<noise_num;i++)
+	{
+		x=rand() % img.cols;
+		y=rand() % img.rows;
+		out.at<Vec3b>(y, x)[2] = 0;
+		out.at<Vec3b>(y, x)[0] = 0;
+		out.at<Vec3b>(y, x)[1] = 0;
+	}
+	namedWindow("噪声图");
+	imshow("噪声图",out);
+	return out;
+}
+
+//高斯滤波器
+Mat gaussfilter(Mat img)
+{
+	//卷积核
+	auto sigma=1.3;
+	const int kernel_size = 3;//卷积核大小
+	const auto PI = 3.1415926;
+	int pad = floor(kernel_size / 2);
+	auto _x = 0, _y = 0;
+    double kernel_sum = 0;
+ 
+	float kernel[kernel_size][kernel_size];
+
+	for (int y = 0; y < kernel_size; y++){
+		for (int x = 0; x < kernel_size; x++){
+			_y = y - pad;
+			_x = x - pad; 
+			kernel[y][x] = 1 / (2 * PI * sigma * sigma) * exp( - (_x * _x + _y * _y) / (2 * sigma * sigma));
+			kernel_sum += kernel[y][x];
+		}
+	}
+	for (int y = 0; y < kernel_size; y++){
+		for (int x = 0; x < kernel_size; x++){
+			 kernel[y][x] /= kernel_sum;
+		}
+	}
+
+	// 滤波
+	double v = 0;
+    Mat out = Mat::zeros(img.rows, img.cols,CV_8UC3);
+	
+	for (int y = 0; y < img.rows-pad; y++)
+	{
+		for (int x = 0; x < img.cols -pad; x++)
+		{
+			  for (int c = 0; c < img.channels(); c++)
+			  {
+			  	v = 0;
+				for (int dy = -pad; dy < pad + 1; dy++){
+					for (int dx = -pad; dx < pad + 1; dx++){
+						if (((x + dx) >= 0) && ((y + dy) >= 0)){ //padding zero
+							v += (double)img.at<Vec3b>(y + dy, x + dx)[c] * kernel[dy + pad][dx + pad];
+						}
+					}
+				}
+				out.at<Vec3b>(y, x)[c] = (uchar)v;
+			  }
+		}
+    }
+	return out;
+}
+
+//高斯滤波测试
+void q8(std::string filename)
+{
+	Mat img = imread(filename);
+	Mat imgnoise = randnoise(img);
+	Mat imgnew = gaussfilter(imgnoise);
+	Mat img2 = Mat(img.rows,img.cols * 2,CV_8UC3);
+	Mat roiright = img2(Rect(0,0,img.cols,img.rows));
+	img.copyTo(roiright);
+	Mat roileft = img2(Rect(img.cols,0,img.cols,img.rows));
+	imgnew.convertTo(imgnew,CV_8UC3);
+	imgnew.copyTo(roileft);
+	namedWindow("高斯滤波");
+	imshow("高斯滤波",img2);
+	waitKey(0);
+}
