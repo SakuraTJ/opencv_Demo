@@ -80,11 +80,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="demo.cpp" />
+    <ClCompile Include="lpr.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="q1_10.cpp" />
+    <ClCompile Include="q20_30.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="demo.h" />
+    <ClInclude Include="lpr.h" />
     <ClInclude Include="q1_10.h" />
+    <ClInclude Include="q20_30.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

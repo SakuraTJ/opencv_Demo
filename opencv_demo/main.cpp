@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include "q1_10.h"
+#include "demo.h"
 
 int main()
 {
@@ -20,6 +21,9 @@ int main()
 	//q7(filename);
 	//q8(filename);
 	//q9(filename);
-	q10(filename);
+	//q10(filename);
+    //demo1();
+	//demo2();
+	demo3();
 	return 0;
 }

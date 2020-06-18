@@ -21,9 +21,27 @@
     <ClCompile Include="q1_10.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="demo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="lpr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="q20_30.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="q1_10.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="demo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="lpr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="q20_30.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
