@@ -90,20 +90,36 @@ void demo2()
 //车牌识别
 void demo3()
 {
-	Mat test=LPRread();
+	Mat test=LPRread(5);
+	//imshow("过程图-原图",test);
+	//waitKey(0);
 	test=LPRgray(test);
+	//imshow("过程图-灰度化",test);
+	//waitKey(0);
 	test=LPRfilter(test);
+	//imshow("过程图-中值滤波",test);
+	//waitKey(0);
 	test=LPRhist(test);
-
-	Mat img2 = Mat(test.rows,test.cols * 2,CV_8UC3);
-	Mat roiright = img2(Rect(0,0,test.cols,test.rows));
-	test.copyTo(roiright);
-	
+	//imshow("过程图-直方图均一化",test);
+	//waitKey(0);
+	test=LPRedgesober(test);
+	//imshow("过程图-边缘检测",test);
+	//waitKey(0);
 	test=LPRthreshold(test);
-	Mat roileft = img2(Rect(test.cols,0,test.cols,test.rows));
-	test.copyTo(roileft);
+	//imshow("过程图-二值化",test);
+	//waitKey(0);
+	//test=LPRdilate(test);
+	//test=LPRopde(test);
+	//imshow("过程图-形态学操作",test);
+	//waitKey(0);
 
+	//LPRplotrect(test,LPRread(5));
+	//waitKey(0);
+
+	Mat test2=LPRcut(LPRread(5),LPRfindregion(test));
+	test2=LPRstringcut(test2);
 	namedWindow("demo");
-	imshow("demo",img2);
+	imshow("demo",test);
+	imshow("提取的车牌",test2);
 	waitKey(0);
 }
